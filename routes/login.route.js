@@ -11,8 +11,19 @@ if (user){
 
     const match = await bcrypt.compare(password,user.password)
     if (match){
-      const token=  jwt.sign({user:user._id,role:"user"},'fatma')
-      res.status(200).json({token})
+        const payload={user:user._id,role:"user"}
+        const accessToken = jwt.sign(
+            payload,
+            process.env.ACCESS_TOKEN_PRIVATE_KEY,
+            { expiresIn: "14m" }
+        );
+        const refreshToken = jwt.sign(
+            payload,
+            process.env.REFRESH_TOKEN_PRIVATE_KEY,
+            { expiresIn: "30d" }
+        )
+      
+      res.status(200).json({"Access Token":accessToken , "Refresh Token":refreshToken})
      
     }
     else 
